@@ -10,4 +10,4 @@ Run :
 
 ### `npm start`
 
-Back-End runing on port 8000 [http://localhost:3000](http://localhost:3000)
+Front-End running on port 3000 [http://localhost:3000](http://localhost:3000)
