@@ -1,162 +1,179 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import TextField from '@mui/material/TextField';
+import * as Yup from "yup";
 
-import Form from "react-validation/build/form";
-import Input from "react-validation/build/input";
-import CheckButton from "react-validation/build/button";
-import { isEmail } from "validator";
+import { signup } from "../slices/auth";
+import { clearMessage } from "../slices/message";
+import Logo from "../assets/images/logo.svg";
 
-import { signup } from "../actions/auth";
-
-const required = (value) => {
-  if (!value) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        This field is required!
-      </div>
-    );
-  }
-};
-
-const validEmail = (value) => {
-  if (!isEmail(value)) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        This is not a valid email.
-      </div>
-    );
-  }
-};
-
-const vname = (value) => {
-  if (value.length < 3) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        The name must be at least 3 characters.
-      </div>
-    );
-  }
-};
-
-const vpassword = (value) => {
-  if (value.length < 6 || value.length > 40) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        The password must be between 6 and 40 characters.
-      </div>
-    );
-  }
-};
+const validationSchema = Yup.object({
+  name: Yup.string()
+    .test(
+      "len",
+      "The name must be at least 3 characters",
+      (val) =>
+        val && val.toString().length >= 3
+    )
+    .required("This field is required"),
+  email: Yup.string()
+    .email("This is not a valid email")
+    .required("This field is required"),
+  password: Yup.string()
+    .test(
+      "len",
+      "Password should be of minimum 8 characters length",
+      (val) =>
+        val && val.toString().length >= 8
+    )
+    .required("This field is required"),
+});
 
 const Signup = () => {
-  const form = useRef();
-  const checkBtn = useRef();
+  const navigate = useNavigate();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [successful, setSuccessful] = useState(false);
 
-  const { message } = useSelector(state => state.message);
+  const { isSignedUp } = useSelector((state) => state.auth);
+  // const { message } = useSelector((state) => state.message);
+
   const dispatch = useDispatch();
 
-  const onChangeName = (e) => {
-    const name = e.target.value;
-    setName(name);
-  };
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      const { name, email, password } = values;
+      setSuccessful(false);
 
-  const onChangeEmail = (e) => {
-    const email = e.target.value;
-    setEmail(email);
-  };
-
-  const onChangePassword = (e) => {
-    const password = e.target.value;
-    setPassword(password);
-  };
-
-  const handleSignup = (e) => {
-    e.preventDefault();
-
-    setSuccessful(false);
-
-    form.current.validateAll();
-
-    if (checkBtn.current.context._errors.length === 0) {
-      dispatch(signup(name, email, password))
+      dispatch(signup({ name, email, password }))
+        .unwrap()
         .then(() => {
           setSuccessful(true);
+          navigate("/todos");
+          window.location.reload();
         })
         .catch(() => {
           setSuccessful(false);
-        });
-    }
-  };
+      });
+    },
+  })
+
+  // const handleSignup = (formValue) => {
+  //   const { name, email, password } = formValue;
+
+  //   setSuccessful(false);
+
+  //   dispatch(signup({ name, email, password }))
+  //     .unwrap()
+  //     .then(() => {
+  //       setSuccessful(true);
+  //     })
+  //     .catch(() => {
+  //       setSuccessful(false);
+  //     });
+  // };
+
+  useEffect(() => {
+    dispatch(clearMessage());
+  }, [dispatch]);
+
+  if (isSignedUp) {
+    return <Navigate to="/todos" />;
+  }
 
   return (
-    <div className="col-md-12">
+    <div className="col-md-12 signup-form">
       <div className="card card-container">
         <img
-          src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+          src={Logo}
           alt="profile-img"
           className="profile-img-card"
         />
+        <h1>Welcome!</h1>
+        <span>Sign up to start using Simpledo today.</span>
+        {/* <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSignup}
+        >
+          {({ errors, touched }) => ( */}
+             <form onSubmit={formik.handleSubmit}>
+              {!successful && (
+                <div>
+                  <div className="form-group">
+                    <TextField
+                      fullWidth
+                      name="name"
+                      type="text"
+                      label="Full Name"
+                      variant="standard"
+                      onChange={formik.handleChange}
+                      error={formik.touched.name && Boolean(formik.errors.name)}
+                      helperText={formik.touched.name && formik.errors.name}
+                    />
+                  </div>
 
-        <Form onSubmit={handleSignup} ref={form}>
-          {!successful && (
-            <div>
-              <div className="form-group">
-                <label htmlFor="name">Name</label>
-                <Input
-                  type="text"
-                  className="form-control"
-                  name="name"
-                  value={name}
-                  onChange={onChangeName}
-                  validations={[required, vname]}
-                />
-              </div>
+                  <div className="form-group">
+                    <TextField
+                      fullWidth
+                      name="email"
+                      type="email"
+                      label="Email"
+                      variant="standard"
+                      onChange={formik.handleChange}
+                      error={formik.touched.email && Boolean(formik.errors.email)}
+                      helperText={formik.touched.email && formik.errors.email}
+                    />
+                  </div>
 
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <Input
-                  type="text"
-                  className="form-control"
-                  name="email"
-                  value={email}
-                  onChange={onChangeEmail}
-                  validations={[required, validEmail]}
-                />
-              </div>
+                  <div className="form-group">
+                    <TextField
+                      fullWidth
+                      name="password"
+                      type="password"
+                      label="Password"
+                      variant="standard"
+                      onChange={formik.handleChange}
+                      error={formik.touched.password && Boolean(formik.errors.password)}
+                      helperText={formik.touched.password && formik.errors.password}
+                    />
+                  </div>
 
-              <div className="form-group">
-                <label htmlFor="password">Password</label>
-                <Input
-                  type="password"
-                  className="form-control"
-                  name="password"
-                  value={password}
-                  onChange={onChangePassword}
-                  validations={[required, vpassword]}
-                />
-              </div>
+                  <div className="signin">
+                    <a href="/login">Do have an account? Sign in.</a>
+                  </div>
 
-              <div className="form-group">
-                <button className="btn btn-primary btn-block">Sign Up</button>
-              </div>
-            </div>
-          )}
-
-          {message && (
-            <div className="form-group">
-              <div className={ successful ? "alert alert-success" : "alert alert-danger" } role="alert">
-                {message}
-              </div>
-            </div>
-          )}
-          <CheckButton style={{ display: "none" }} ref={checkBtn} />
-        </Form>
+                  <div className="form-group mt-3">
+                    <button type="submit" className="btn btn-primary w-100">
+                      Sign Up
+                    </button>
+                  </div>
+                </div>
+              )}
+            </form>
+          {/* )}
+        </Formik> */}
       </div>
+
+      {/* {message && (
+        <div className="form-group">
+          <div
+            className={
+              successful ? "alert alert-success" : "alert alert-danger"
+            }
+            role="alert"
+          >
+            {message}
+          </div>
+        </div>
+      )} */}
     </div>
   );
 };

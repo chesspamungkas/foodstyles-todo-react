@@ -1,126 +1,137 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useNavigate  } from 'react-router-dom';
+import { Navigate, useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import TextField from '@mui/material/TextField';
+import * as Yup from "yup";
 
-import Form from "react-validation/build/form";
-import Input from "react-validation/build/input";
-import CheckButton from "react-validation/build/button";
+import { login } from "../slices/auth";
+import { clearMessage } from "../slices/message";
+import Logo from "../assets/images/logo.svg";
 
-import { login } from "../actions/auth";
+const validationSchema = Yup.object({
+  email: Yup
+    .string('Enter your email')
+    .email('Enter a valid email')
+    .required('Email is required'),
+  password: Yup
+    .string('Enter your password')
+    .min(8, 'Password should be of minimum 8 characters length')
+    .required('Password is required')
+});
 
-const required = (value) => {
-  if (!value) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        This field is required!
-      </div>
-    );
-  }
-};
+const Login = () => {
+  const navigate = useNavigate();
 
-const Login = (props) => {
-  let navigate = useNavigate();
-
-  const form = useRef();
-  const checkBtn = useRef();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { isLoggedIn } = useSelector(state => state.auth);
-  const { message } = useSelector(state => state.message);
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  // const { message } = useSelector((state) => state.message);
 
   const dispatch = useDispatch();
 
-  const onChangeEmail = (e) => {
-    const email = e.target.value;
-    setEmail(email);
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      const { email, password } = values;
+      setLoading(true);
 
-  const onChangePassword = (e) => {
-    const password = e.target.value;
-    setPassword(password);
-  };
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-
-    setLoading(true);
-
-    form.current.validateAll();
-
-    if (checkBtn.current.context._errors.length === 0) {
-      dispatch(login(email, password))
+      dispatch(login({ email, password }))
+        .unwrap()
         .then(() => {
           navigate("/todos");
           window.location.reload();
         })
         .catch(() => {
           setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
-  };
+      });
+    },
+  });
+
+  useEffect(() => {
+    dispatch(clearMessage());
+  }, [dispatch]);
 
   if (isLoggedIn) {
     return <Navigate to="/todos" />;
   }
 
   return (
-    <div className="col-md-12">
+    <div className="col-md-12 login-form">
       <div className="card card-container">
         <img
-          src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+          src={Logo}
           alt="profile-img"
           className="profile-img-card"
         />
-
-        <Form onSubmit={handleLogin} ref={form}>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <Input
-              type="text"
-              className="form-control"
-              name="email"
-              value={email}
-              onChange={onChangeEmail}
-              validations={[required]}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <Input
-              type="password"
-              className="form-control"
-              name="password"
-              value={password}
-              onChange={onChangePassword}
-              validations={[required]}
-            />
-          </div>
-
-          <div className="form-group">
-            <button className="btn btn-primary btn-block" disabled={loading}>
-              {loading && (
-                <span className="spinner-border spinner-border-sm"></span>
-              )}
-              <span>Login</span>
-            </button>
-          </div>
-
-          {message && (
-            <div className="form-group">
-              <div className="alert alert-danger" role="alert">
-                {message}
+        <h1>Welcome back!</h1>
+        <span>Log in to continue.</span>
+        {/* <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleLogin}
+        > */}
+          {/* {({ errors, touched }) => ( */}
+            <form onSubmit={formik.handleSubmit}>
+              <div className="form-group">
+                <TextField
+                  fullWidth
+                  name="email"
+                  type="text"
+                  label="Email"
+                  variant="standard"
+                  onChange={formik.handleChange}
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  helperText={formik.touched.email && formik.errors.email}
+                />
               </div>
-            </div>
-          )}
-          <CheckButton style={{ display: "none" }} ref={checkBtn} />
-        </Form>
+
+              <div className="form-group">
+                <TextField
+                  fullWidth
+                  name="password"
+                  type="password"
+                  label="Password"
+                  variant="standard"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  error={formik.touched.password && Boolean(formik.errors.password)}
+                  helperText={formik.touched.password && formik.errors.password}
+                />
+              </div>
+              
+              <div className="signup">
+                <a href="/signup">Don’t have an account? Sign up.</a>
+              </div>
+
+              <div className="form-group mt-3">
+                <button
+                  type="submit"
+                  className="btn btn-primary w-100"
+                  disabled={loading}
+                >
+                  {loading && (
+                    <span className="spinner-border spinner-border-sm"></span>
+                  )}
+                  Login
+                </button>
+              </div>
+            </form>
+          {/* )} */}
+        {/* </Formik> */}
       </div>
+
+      {/* {message && (
+        <div className="form-group">
+          <div className="alert alert-danger" role="alert">
+            {message}
+          </div>
+        </div>
+      )} */}
     </div>
   );
 };

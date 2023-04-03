@@ -1,16 +1,17 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import ReactDOM from 'react-dom/client';
 import { Provider } from "react-redux";
 import { store } from "./store";
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import './assets/fonts/MarkPro.woff2';
+import './assets/fonts/MarkPro.woff';
+import './assets/fonts/MarkPro.ttf';
 
 const container = document.getElementById('root');
 const root = createRoot(container);
 
-// const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
