@@ -1,13 +1,17 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import authReducer from "./slices/auth";
+import todoReducer from "./slices/todo";
 import messageReducer from "./slices/message";
 
-const reducer = {
+const reducer = combineReducers({
   auth: authReducer,
+  todos: todoReducer,
   message: messageReducer
-}
+});
 
-export const store = configureStore({
+const store = configureStore({
   reducer: reducer,
   devTools: true,
 });
+
+export default store;

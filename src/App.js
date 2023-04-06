@@ -7,7 +7,7 @@ import './App.css';
 
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import Todos from "./components/Todos";
+import Todo from "./components/Todo";
 
 import { logout } from "./slices/auth";
 
@@ -44,7 +44,7 @@ function App() {
               </li>
               <li className="nav-item">
                 <a href="/login" className="nav-link" onClick={logOut}>
-                  LogOut
+                  Logout
                 </a>
               </li>
             </ul>
@@ -55,14 +55,12 @@ function App() {
 
         <div className="container">
           <Routes>
-            <Route path="/" element={<Signup />} />
+            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />        
-            <Route path="/todos" element={<Todos />} />
+            <Route path='/todos' element={<Todo />} />
           </Routes>
         </div>
-
-        {/* <AuthVerify logOut={logOut}/> */}
       </div>
     </Router>
   );

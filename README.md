@@ -1,6 +1,10 @@
-# FoodStyles Todo React
+# FoodStyles Todo App UI React
 
-Tech Stack : React, Redux
+Tech Stack : React, Redux, Sequelize
+
+## Note : Please Run FoodStyles Todo App REST API first before run this App
+
+See the Github repository for Back-End [REST API - Todo App](https://github.com/chesspamungkas/foodstyles-todo-restapi)
 
 ## Available Scripts
 

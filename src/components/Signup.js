@@ -17,18 +17,15 @@ const validationSchema = Yup.object({
       (val) =>
         val && val.toString().length >= 3
     )
-    .required("This field is required"),
-  email: Yup.string()
-    .email("This is not a valid email")
-    .required("This field is required"),
-  password: Yup.string()
-    .test(
-      "len",
-      "Password should be of minimum 8 characters length",
-      (val) =>
-        val && val.toString().length >= 8
-    )
-    .required("This field is required"),
+    .required("Name is required"),
+  email: Yup
+    .string('Enter your email')
+    .email('Enter a valid email')
+    .required('Email is required'),
+  password: Yup
+    .string('Enter your password')
+    .min(8, 'Password should be of minimum 8 characters length')
+    .required('Password is required')
 });
 
 const Signup = () => {
@@ -37,7 +34,6 @@ const Signup = () => {
   const [successful, setSuccessful] = useState(false);
 
   const { isSignedUp } = useSelector((state) => state.auth);
-  // const { message } = useSelector((state) => state.message);
 
   const dispatch = useDispatch();
 
@@ -65,21 +61,6 @@ const Signup = () => {
     },
   })
 
-  // const handleSignup = (formValue) => {
-  //   const { name, email, password } = formValue;
-
-  //   setSuccessful(false);
-
-  //   dispatch(signup({ name, email, password }))
-  //     .unwrap()
-  //     .then(() => {
-  //       setSuccessful(true);
-  //     })
-  //     .catch(() => {
-  //       setSuccessful(false);
-  //     });
-  // };
-
   useEffect(() => {
     dispatch(clearMessage());
   }, [dispatch]);
@@ -98,82 +79,61 @@ const Signup = () => {
         />
         <h1>Welcome!</h1>
         <span>Sign up to start using Simpledo today.</span>
-        {/* <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSignup}
-        >
-          {({ errors, touched }) => ( */}
-             <form onSubmit={formik.handleSubmit}>
-              {!successful && (
-                <div>
-                  <div className="form-group">
-                    <TextField
-                      fullWidth
-                      name="name"
-                      type="text"
-                      label="Full Name"
-                      variant="standard"
-                      onChange={formik.handleChange}
-                      error={formik.touched.name && Boolean(formik.errors.name)}
-                      helperText={formik.touched.name && formik.errors.name}
-                    />
-                  </div>
+        <form onSubmit={formik.handleSubmit}>
+        {!successful && (
+          <div>
+            <div className="form-group">
+              <TextField
+                fullWidth
+                name="name"
+                type="text"
+                label="Full Name"
+                variant="standard"
+                onChange={formik.handleChange}
+                error={formik.touched.name && Boolean(formik.errors.name)}
+                helperText={formik.touched.name && formik.errors.name}
+              />
+            </div>
 
-                  <div className="form-group">
-                    <TextField
-                      fullWidth
-                      name="email"
-                      type="email"
-                      label="Email"
-                      variant="standard"
-                      onChange={formik.handleChange}
-                      error={formik.touched.email && Boolean(formik.errors.email)}
-                      helperText={formik.touched.email && formik.errors.email}
-                    />
-                  </div>
+            <div className="form-group">
+              <TextField
+                fullWidth
+                name="email"
+                type="email"
+                label="Email"
+                variant="standard"
+                onChange={formik.handleChange}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
+              />
+            </div>
 
-                  <div className="form-group">
-                    <TextField
-                      fullWidth
-                      name="password"
-                      type="password"
-                      label="Password"
-                      variant="standard"
-                      onChange={formik.handleChange}
-                      error={formik.touched.password && Boolean(formik.errors.password)}
-                      helperText={formik.touched.password && formik.errors.password}
-                    />
-                  </div>
+            <div className="form-group">
+              <TextField
+                fullWidth
+                name="password"
+                type="password"
+                label="Password"
+                variant="standard"
+                onChange={formik.handleChange}
+                error={formik.touched.password && Boolean(formik.errors.password)}
+                helperText={formik.touched.password && formik.errors.password}
+              />
+            </div>
 
-                  <div className="signin">
-                    <a href="/login">Do have an account? Sign in.</a>
-                  </div>
+            <div className="signin">
+              <a href="/login">Do have an account? Sign in.</a>
+            </div>
 
-                  <div className="form-group mt-3">
-                    <button type="submit" className="btn btn-primary w-100">
-                      Sign Up
-                    </button>
-                  </div>
-                </div>
-              )}
-            </form>
-          {/* )}
-        </Formik> */}
-      </div>
-
-      {/* {message && (
-        <div className="form-group">
-          <div
-            className={
-              successful ? "alert alert-success" : "alert alert-danger"
-            }
-            role="alert"
-          >
-            {message}
+            <div className="form-group mt-3">
+              <button type="submit" className="btn btn-primary w-100">
+                Sign Up
+              </button>
+            </div>
           </div>
-        </div>
-      )} */}
+        )}
+      </form>
+      </div>
     </div>
   );
 };

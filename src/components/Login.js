@@ -26,7 +26,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const { isLoggedIn } = useSelector((state) => state.auth);
-  // const { message } = useSelector((state) => state.message);
 
   const dispatch = useDispatch();
 
@@ -70,68 +69,52 @@ const Login = () => {
         />
         <h1>Welcome back!</h1>
         <span>Log in to continue.</span>
-        {/* <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleLogin}
-        > */}
-          {/* {({ errors, touched }) => ( */}
-            <form onSubmit={formik.handleSubmit}>
-              <div className="form-group">
-                <TextField
-                  fullWidth
-                  name="email"
-                  type="text"
-                  label="Email"
-                  variant="standard"
-                  onChange={formik.handleChange}
-                  error={formik.touched.email && Boolean(formik.errors.email)}
-                  helperText={formik.touched.email && formik.errors.email}
-                />
-              </div>
-
-              <div className="form-group">
-                <TextField
-                  fullWidth
-                  name="password"
-                  type="password"
-                  label="Password"
-                  variant="standard"
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  error={formik.touched.password && Boolean(formik.errors.password)}
-                  helperText={formik.touched.password && formik.errors.password}
-                />
-              </div>
-              
-              <div className="signup">
-                <a href="/signup">Don’t have an account? Sign up.</a>
-              </div>
-
-              <div className="form-group mt-3">
-                <button
-                  type="submit"
-                  className="btn btn-primary w-100"
-                  disabled={loading}
-                >
-                  {loading && (
-                    <span className="spinner-border spinner-border-sm"></span>
-                  )}
-                  Login
-                </button>
-              </div>
-            </form>
-          {/* )} */}
-        {/* </Formik> */}
-      </div>
-
-      {/* {message && (
-        <div className="form-group">
-          <div className="alert alert-danger" role="alert">
-            {message}
+        <form onSubmit={formik.handleSubmit}>
+          <div className="form-group">
+            <TextField
+              fullWidth
+              name="email"
+              type="text"
+              label="Email"
+              variant="standard"
+              onChange={formik.handleChange}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
+            />
           </div>
-        </div>
-      )} */}
+
+          <div className="form-group">
+            <TextField
+              fullWidth
+              name="password"
+              type="password"
+              label="Password"
+              variant="standard"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
+            />
+          </div>
+          
+          <div className="signup">
+            <a href="/signup">Don’t have an account? Sign up.</a>
+          </div>
+
+          <div className="form-group mt-3">
+            <button
+              type="submit"
+              className="btn btn-primary w-100"
+              disabled={loading}
+            >
+              {loading && (
+                <span className="spinner-border spinner-border-sm"></span>
+              )}
+              Login
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
