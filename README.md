@@ -2,9 +2,9 @@
 
 Tech Stack : React, Redux, Sequelize
 
-## Note : Please Run FoodStyles Todo App REST API first before run this App
+## Note : Please Run FoodStyles Todo App REST API first before run this React App
 
-See the Github repository for Back-End [REST API - Todo App](https://github.com/chesspamungkas/foodstyles-todo-restapi)
+See the Github repository for Back-End [REST API - Todo App] : (https://github.com/chesspamungkas/foodstyles-todo-restapi)
 
 ## Available Scripts
 
@@ -14,4 +14,4 @@ Run :
 
 ### `npm start`
 
-Front-End running on port 3000 [http://localhost:3000](http://localhost:3000)
+Front-End running on port 3000 [http://localhost:3000] : (http://localhost:3000)
